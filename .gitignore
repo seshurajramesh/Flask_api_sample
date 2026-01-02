@@ -1,0 +1,8 @@
+.venv
+.vscode
+instance/
+DS_Store
+*.pyc
+__pycache__/
+env/
+env.bak/
