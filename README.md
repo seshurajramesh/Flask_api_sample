@@ -1,2 +1,2 @@
-# First Flask_Api_Smorest_project
-## Simple Basic project
+# First Flask_Api_smorest_project
+## Simple Basic project for python flask
