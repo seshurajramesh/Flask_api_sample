@@ -1,12 +1,12 @@
 from flask.views import MethodView
 from flask import request, jsonify
 from flask_smorest import Blueprint, abort
-from blocklist import BLOCKLIST
 from models import UserModel
 from schemas import UserSchema
 from db import db
 from passlib.hash import pbkdf2_sha256
 from flask_jwt_extended import create_access_token, get_jwt, jwt_required, get_jwt_identity, create_refresh_token
+from models import BlockedTokenModel
 
 
 
@@ -71,7 +71,9 @@ class UserLogout(MethodView):
     @jwt_required()
     def post(self):
         jti = get_jwt()["jti"]
-        BLOCKLIST.add(jti)
+        blocked_token = BlockedTokenModel(jti=jti)
+        db.session.add(blocked_token)
+        db.session.commit()
         return {"message": "Successfully logged out"}, 200
     
 
@@ -83,5 +85,7 @@ class TokenRefresh(MethodView):
         new_token = create_access_token(identity=current_user, fresh=False)
         # Make it clear that when to add the refresh token to the blocklist will depend on the app design
         jti = get_jwt()["jti"]
-        BLOCKLIST.add(jti)
+        blocked_token = BlockedTokenModel(jti=jti)
+        db.session.add(blocked_token)
+        db.session.commit()
         return {"access_token": new_token}, 200
