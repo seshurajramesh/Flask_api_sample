@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from db import db
 
 import models
-from blocklist import BLOCKLIST
+from models.blockexpiredtoken import BlockedTokenModel
 
 
 
@@ -73,7 +73,7 @@ def create_app(db_url=None):
     
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blocklist(jwt_header, jwt_payload):
-        return jwt_payload["jti"] in BLOCKLIST
+        return BlockedTokenModel.query.filter_by(jti=jwt_payload["jti"]).first() is not None
 
     
     @jwt.revoked_token_loader
