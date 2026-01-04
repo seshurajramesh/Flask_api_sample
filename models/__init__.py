@@ -4,3 +4,4 @@ from models.tag import TagModel
 from models.item_tags import ItemsTags
 from models.user import UserModel
 from models.blockexpiredtoken import BlockedTokenModel
+from models.redis import redis_client
