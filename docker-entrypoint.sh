@@ -6,7 +6,7 @@ sleep 3
 
 # Initialize and run migrations
 flask db init || true  # '|| true' ignores error if already initialized
-flask db migrate -m "Initial migration"
+flask db migrate 
 flask db upgrade
 
 # Start the Flask app

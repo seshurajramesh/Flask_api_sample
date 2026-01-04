@@ -12,6 +12,7 @@ from db import db
 
 import models
 from models.blockexpiredtoken import BlockedTokenModel
+from models.redis import redis_client
 
 
 
@@ -19,6 +20,7 @@ from resources.item import blp as ItemBlueprint
 from resources.store import blp as StoreBlueprint
 from resources.tag import blp as TagBlueprint
 from resources.user import blp as UserBlueprint
+
 
 def create_app(db_url=None):
     app = Flask(__name__)
@@ -73,7 +75,9 @@ def create_app(db_url=None):
     
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blocklist(jwt_header, jwt_payload):
-        return BlockedTokenModel.query.filter_by(jti=jwt_payload["jti"]).first() is not None
+        jti = jwt_payload["jti"]
+        return redis_client.get(f"blacklist:{jti}") is not None
+        #return BlockedTokenModel.query.filter_by(jti=jwt_payload["jti"]).first() is not None
 
     
     @jwt.revoked_token_loader
